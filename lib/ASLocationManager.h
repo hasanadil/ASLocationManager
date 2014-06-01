@@ -20,16 +20,6 @@ typedef void(^ASLocationCompletion)(CLLocation* location);
  */
 -(void) userLocationWithCompletion:(ASLocationCompletion)completion;
 
-/**
- Keep fetching the user's location when available and the completion is passed the location.
- */
--(void) streamUserLocationToDelegate:(ASLocationCompletion)delegate withCompletion:(void(^)(NSString* blockId))completion;
-
-/**
- Stop streaming the user's location for the given blockId
- */
--(void) stopStreamingUserLocationForBlockWithId:(NSString*)blockId;
-
 
 +(ASLocationManager*) sharedInstance;
 

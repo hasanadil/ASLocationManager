@@ -22,10 +22,6 @@
  Blocks which are awaiting for the user's location
  */
 @property (nonatomic, strong) NSMutableSet *locationRequests;
-/**
- Blocks which are awaiting for the user's location and are to be kept
- */
-@property (nonatomic, strong) NSMutableDictionary *locationStreamingRequests;
 
 @end
 
@@ -35,7 +31,6 @@
     self = [super init];
     if (self) {
         _locationRequests = [NSMutableSet set];
-        _locationStreamingRequests = [NSMutableDictionary dictionary];
         
         _locationOperationsQueue = dispatch_queue_create("com.assemblelabs.locationOperations", DISPATCH_QUEUE_SERIAL);
         
@@ -58,38 +53,6 @@
             [me setIsLocating:YES];
         }
     });
-}
-
--(void) streamUserLocationToDelegate:(ASLocationCompletion)delegate withCompletion:(void(^)(NSString* blockId))completion
-{
-    __block NSString* blockId;
-    __weak typeof(self) me = self;
-    dispatch_sync(self.locationOperationsQueue, ^{
-        
-        CFUUIDRef locUDIDRef = CFUUIDCreate(NULL);
-        CFStringRef locUDIDRefString = CFUUIDCreateString(NULL, locUDIDRef);
-        blockId = [NSString stringWithString:(__bridge NSString *) locUDIDRefString];
-        CFRelease(locUDIDRef);
-        CFRelease(locUDIDRefString);
-        
-        [me.locationStreamingRequests setObject:[completion copy] forKey:blockId];
-        
-        if (!me.isLocating) {
-            [me.locationManager startUpdatingLocation];
-            [me setIsLocating:YES];
-        }
-        
-        if (completion) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completion(blockId);
-            });
-        }
-    });
-}
-
--(void) stopStreamingUserLocationForBlockWithId:(NSString*)blockId
-{
-    [self.locationStreamingRequests removeObjectForKey:blockId];
 }
 
 /*

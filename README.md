@@ -7,6 +7,8 @@ An app which needs the user's location across a variety of UIView's or other com
 
 With ASLocationManager, location services are centralized. It does all its work in a background thread so your app expereince isn't affected. 
 
+Another goal of ASLocationManager is to use the GPS services minimally. Therefore, location services from Cocoa are minimally used.
+
 How does it work?
 =================
 Simple, you fetch a shared singleton, and pass a block which is called whenever the user's location is retrieved.
